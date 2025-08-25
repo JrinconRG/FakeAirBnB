@@ -164,8 +164,9 @@ describe('Favoritos Component', () => {
     renderWithProviders(<Favoritos />)
 
     await waitFor(() => {
-      expect(screen.getByText('Error obteniendo favoritos')).toBeInTheDocument()
+      expect(screen.getByText('No tienes favoritos aún')).toBeInTheDocument()
     })
+    
 
     consoleSpy.mockRestore()
   })

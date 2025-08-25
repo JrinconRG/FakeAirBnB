@@ -11,6 +11,7 @@ const AvailabilityNotification = ({ propiedad }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [error,setError] = useState(null);
 
   const checkSubscription = async () => {
     if (!usuario || !propiedad) return;
@@ -45,6 +46,7 @@ const AvailabilityNotification = ({ propiedad }) => {
     }
 
     setLoading(true);
+    setError(null);
     try {
       await addDoc(collection(db, "notificaciones_disponibilidad"), {
         usuarioId: usuario.uid,
@@ -63,7 +65,9 @@ const AvailabilityNotification = ({ propiedad }) => {
       alert("Te has suscrito exitosamente a las notificaciones de disponibilidad");
     } catch (error) {
       console.error("Error al suscribirse:", error);
-      alert("Error al suscribirse a las notificaciones");
+      alert("Error al suscribirse");
+      setError("Error al suscribirse");
+      
     } finally {
       setLoading(false);
     }
@@ -140,8 +144,9 @@ const AvailabilityNotification = ({ propiedad }) => {
             <h4>¿Cuándo te interesa esta propiedad?</h4>
             <div className="date-inputs">
               <div className="date-input">
-                <label>Fecha de llegada:</label>
+                <label htmlFor="startDate" >Fecha de llegada:</label>
                 <input
+                  id="startDate"
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
@@ -149,8 +154,9 @@ const AvailabilityNotification = ({ propiedad }) => {
                 />
               </div>
               <div className="date-input">
-                <label>Fecha de salida:</label>
+                <label htmlFor="endDate">Fecha de salida:</label>
                 <input
+                  id="endDate"
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
@@ -172,6 +178,7 @@ const AvailabilityNotification = ({ propiedad }) => {
               >
                 {loading ? 'Suscribiendo...' : 'Suscribirse'}
               </button>
+              {error && <p role="alert">{error}</p>}
             </div>
           </div>
         </div>

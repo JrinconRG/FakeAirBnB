@@ -152,31 +152,31 @@ describe('AvailabilityNotification Component', () => {
 
   // TEST 4:
   it('debe manejar errores al suscribirse', async () => {
-    const mockSnapshot = {
-      empty: true
-    }
-
+    const mockSnapshot = { empty: true }
+  
     const { getDocs, addDoc } = await import('firebase/firestore')
     getDocs.mockResolvedValue(mockSnapshot)
     addDoc.mockRejectedValue(new Error('Error de conexión'))
-
+  
     renderWithProviders(<AvailabilityNotification propiedad={mockPropiedad} />)
+  
+    // Abrir el modal
+    fireEvent.click(screen.getByText('Notificar Disponibilidad'))
+  
+    // Seleccionar inputs por label
+    const startDateInput = screen.getByLabelText(/fecha de llegada/i)
+    const endDateInput = screen.getByLabelText(/fecha de salida/i)
 
-    const subscribeButton = screen.getByText('Notificar Disponibilidad')
-    fireEvent.click(subscribeButton)
-
-    const inputs = screen.getAllByDisplayValue('')
-    const startDateInput = inputs[0]
-    const endDateInput = inputs[1]
-    
     fireEvent.change(startDateInput, { target: { value: '2024-02-01' } })
     fireEvent.change(endDateInput, { target: { value: '2024-02-05' } })
 
-    const confirmButton = screen.getByText('Suscribirse')
-    fireEvent.click(confirmButton)
-
-    await waitFor(() => {
-      expect(screen.getByText('Error al suscribirse')).toBeInTheDocument()
-    })
+    // Confirmar suscripción
+    fireEvent.click(screen.getByText('Suscribirse'))
+  
+    // Verificar mensaje de error
+    expect(
+      await screen.findByText(/error al suscribirse/i)
+    ).toBeInTheDocument()
   })
+  
 })
